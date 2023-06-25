@@ -1,20 +1,15 @@
-public class HealthPackage extends ElementoBasico{
+public class HealthPackage extends ElementoBasico {
     public Hero hero;
     public int health;
 
-    public HealthPackage(String id, String iconPath, int linInicial, int colInicial, Tabuleiro tabuleiro,Hero hero){ 
+    public HealthPackage(String id, String iconPath, int linInicial, int colInicial, Tabuleiro tabuleiro, int health) {
         super(id, iconPath, linInicial, colInicial, tabuleiro);
-        this.health = 40;
-        this.hero = hero;
+        this.health = health;
     }
 
-    public void heal(Hero hero){
-       hero.health += health;
+    public int getHealth() {
+        return health;
     }
-
-
-
-
 
     @Override
     public void acao(ElementoBasico outro) {
