@@ -1,18 +1,22 @@
 public class HealthPackage extends ElementoBasico {
-    public Hero hero;
-    public int health;
+    private int healingAmount;
 
-    public HealthPackage(String id, String iconPath, int linInicial, int colInicial, Tabuleiro tabuleiro, int health) {
+    public HealthPackage(String id, String iconPath, int linInicial, int colInicial, Tabuleiro tabuleiro,
+            int healingAmount) {
         super(id, iconPath, linInicial, colInicial, tabuleiro);
-        this.health = health;
+        this.healingAmount = healingAmount;
     }
 
-    public int getHealth() {
-        return health;
+    public int getHealingAmount() {
+        return healingAmount;
     }
 
     @Override
     public void acao(ElementoBasico outro) {
-        throw new UnsupportedOperationException("Unimplemented method 'acao'");
+        if (outro instanceof Hero) {
+            Hero hero = (Hero) outro;
+            hero.heal(healingAmount);
+            System.out.println("Hero's health restored. Remaining health: " + hero.getHealth());
+        }
     }
 }
