@@ -30,8 +30,8 @@ public class Tabuleiro extends JPanel {
     }
 
     public static ImageIcon createImageIcon(String path) {
-        java.net.URL imgURL = App.class.getResource("imagens/"+path);
-        
+        java.net.URL imgURL = App.class.getResource("imagens/" + path);
+
         if (imgURL != null) {
             return new ImageIcon(imgURL);
         } else {
@@ -88,60 +88,72 @@ public class Tabuleiro extends JPanel {
             }
         }
     }
-    
+
     public void loadLevel(int nivel) {
         Path path1 = Paths.get(String.format("nivel%d.txt", nivel));
         try (BufferedReader reader = Files.newBufferedReader(path1)) {
             String line = null;
             int lin = 0;
             while ((line = reader.readLine()) != null) {
-   
-                for (int col=0; col<MAXCOL; col++) {
+                for (int col = 0; col < MAXCOL; col++) {
                     if (line.charAt(col) != ' ') {
-                    ElementoBasico elem = this.getElem(line.charAt(col), lin, col);
-                    this.insereElemento(elem);
+                        ElementoBasico elem = getElem(line.charAt(col), lin, col);
+                        insereElemento(elem);
+                    } else {
+                        ElementoBasico elem = new Fundo("Fundo", lin, col, this);
+                        insereElemento(elem);
                     }
                 }
                 lin++;
-                
             }
-        }
-        catch (IOException x) {
+        } catch (IOException x) {
             System.err.format("Erro de E/S: %s%n", x);
         }
     }
-        
+
     public ElementoBasico getElem(char elem, int lin, int col) {
         Random r = new Random();
         switch (elem) {
-           case ' ': return new Fundo("Fundo",lin,col,this);
-           case '-': return new Eca("Dica",lin,col,this);
-           case '?': return new Pista("Pista",r.nextInt(15), lin,col,this);
-           case '^': return new TBD("Buraco","buraco_jogo.png",lin,col,this);
-           case '+': return new TBD("Portal","portal_jogo.png",lin,col,this);     
-           case '*': {  ElementoBasico anterior = new Fundo("Fundo",lin,col,this);
-                        principal = new Personagem("Herói","heroi_jogo.png",lin,col,this);
-                        principal.setAnterior(anterior);
-                        return principal;
-                    }
-           default: throw new IllegalArgumentException("Personagem invalido: "+elem);
+            case ' ':
+                return new Fundo("Fundo", lin, col, this);
+            case '^':
+                return new Trap("Trap", "trap_jogo.png", lin, col, this, 10); // Adjust the damage value as needed
+            case '*': {
+                ElementoBasico anterior = new Fundo("Fundo", lin, col, this);
+                principal = new Personagem("Herói", "heroi_jogo.png", lin, col, this);
+                principal.setAnterior(anterior);
+                return principal;
+            }
+            case 'M': {
+                int monsterHealth = r.nextInt(50) + 50; // Random health between 50 and 100
+                int monsterDamage = r.nextInt(10) + 1; // Random damage between 1 and 10
+                return new Monstro("Monster", "monster_jogo.png", lin, col, this, monsterHealth, monsterDamage);
+            }
+            case 'T': {
+                int trapDamage = r.nextInt(10) + 1; // Random damage between 1 and 10
+                return new Trap("Trap", "trap_jogo.png", lin, col, this, trapDamage);
+            }
+            case 'W': {
+                int weaponDamage = r.nextInt(10) + 1; // Random damage between 1 and 10
+                return new Weapon("Weapon", "weapon_jogo.png", lin, col, this, weaponDamage);
+            }
+            default:
+                throw new IllegalArgumentException("Personagem inválido: " + elem);
         }
-
     }
-     
-        // personagem = new Personagem("Feliz","icone.jpg",2,0,tabuleiro);
-        // ElementoBasico anterior = tabuleiro.insereElemento(personagem);
-        // personagem.setAnterior(anterior);
 
-        // Pista pista1 = new Pista("Pista15",15,2,4,tabuleiro);
-        // tabuleiro.insereElemento(pista1);
-        // Pista pista2 = new Pista("Pista22",22,0,2,tabuleiro);
-        // tabuleiro.insereElemento(pista2);
-        // Eca eca = new Eca("Eca2215",2215,4,2,tabuleiro);
-        // tabuleiro.insereElemento(eca);
+    // personagem = new Personagem("Feliz","icone.jpg",2,0,tabuleiro);
+    // ElementoBasico anterior = tabuleiro.insereElemento(personagem);
+    // personagem.setAnterior(anterior);
+
+    // Pista pista1 = new Pista("Pista15",15,2,4,tabuleiro);
+    // tabuleiro.insereElemento(pista1);
+    // Pista pista2 = new Pista("Pista22",22,0,2,tabuleiro);
+    // tabuleiro.insereElemento(pista2);
+    // Eca eca = new Eca("Eca2215",2215,4,2,tabuleiro);
+    // tabuleiro.insereElemento(eca);
 
     public Personagem getPrincipal() {
         return principal;
     }
 }
-
